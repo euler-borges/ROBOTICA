@@ -20,9 +20,11 @@ def forward_kinematics(params):
     """
     T = np.eye(4)
     points = [np.array([0, 0, 0, 1])]  # base
-    for (theta, d, a, alpha) in params:
+    for i, (theta, d, a, alpha) in enumerate(params, start=1):
         T = T @ dh_matrix(np.radians(theta), d, a, np.radians(alpha))
-        points.append(T @ np.array([0, 0, 0, 1]))
+        p = T @ np.array([0, 0, 0, 1])
+        points.append(p)
+        print(f"P{i} -> x={p[0]:.3f}, y={p[1]:.3f}, z={p[2]:.3f}")
     return points
 
 # -------- Plot 3D --------
@@ -46,9 +48,7 @@ def plot_robot(params):
     ax.set_title("Robô com DH (3D)")
 
     # escala proporcional
-    max_range = max(
-        np.ptp(xs), np.ptp(ys), np.ptp(zs)
-    )
+    max_range = max(np.ptp(xs), np.ptp(ys), np.ptp(zs))
     mid_x = (max(xs) + min(xs)) / 2
     mid_y = (max(ys) + min(ys)) / 2
     mid_z = (max(zs) + min(zs)) / 2
@@ -60,8 +60,8 @@ def plot_robot(params):
 
 # ------------------ EXEMPLO ------------------
 params = [
-    (45, 1, 2.0, 0),   # θ=45°, d=1, a=2.0, α=0
-    (30, 0.5, 1.5, 45) # θ=30°, d=0.5, a=1.5, α=45°
+    (45, 1, 2.0, 0),    # θ=45°, d=1, a=2.0, α=0
+    (30, 0.5, 1.5, 45)  # θ=30°, d=0.5, a=1.5, α=45°
 ]
 
 plot_robot(params)
